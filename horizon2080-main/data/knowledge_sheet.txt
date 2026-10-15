@@ -1,0 +1,127 @@
+FICHE DE CONNAISSANCES — contenu médical de référence
+========================================================================
+
+But : injectée dans le prompt du modèle à la place d'un vrai RAG vectoriel (abandonné pour
+cette échéance, voir section 6 du fichier de contexte). Doit rester courte : elle partage
+la fenêtre de contexte (num_ctx) avec le prompt système, les symptômes et les mesures.
+
+STATUT [23/09, réécriture après perte accidentelle du fichier précédent] : contenu rédigé à
+partir de sources grand public fiables (ameli.fr, Manuel MSD grand public, sante.fr). À
+RELIRE et vérifier une dernière fois avant la démo, comme convenu.
+
+--------------------------------------------------------
+1. CONSTANTES VITALES DE RÉFÉRENCE (recopié depuis config.THRESHOLDS)
+--------------------------------------------------------
+
+- SpO2 : normale ≥ 95 % | basse 90-94 % | critique < 90 %
+- Température : normale 36-37,5 °C | fièvre ≥ 38 °C | critique ≥ 40 °C
+- Pouls au repos : normale 50-120 bpm | basse < 50 bpm | haute > 120 bpm
+
+[Ces valeurs sont déjà codées dans config.py. Si tu changes une valeur ici, change-la
+D'ABORD dans config.THRESHOLDS, puis reporte-la ici.]
+
+--------------------------------------------------------
+2. PATHOLOGIES COURANTES — 8 fiches, une par cause de rules.CAUSE_TABLE
+--------------------------------------------------------
+
+[x] Rhume (rhinopharyngite)
+    Symptômes typiques : fatigue et frissons au début, nez bouché puis écoulement nasal
+    (clair au départ, plus épais et jaunâtre après 2-3 jours), éternuements, yeux larmoyants,
+    maux de tête frontaux, gorge parfois irritée. Un écoulement jaune-vert ne veut PAS dire
+    surinfection bactérienne, c'est une évolution normale.
+    Constantes associées : fièvre absente ou minime (< 38 °C).
+    Gravité habituelle : bénigne, guérison spontanée en 5 à 20 jours. Rares complications
+    possibles (sinusite, otite, bronchite) si ça traîne ou s'aggrave nettement.
+
+[x] Grippe
+    Symptômes typiques : fièvre, toux, fatigue, courbatures, début brutal.
+    Constantes associées : fièvre (température haute), parfois pouls légèrement élevé.
+    Gravité habituelle : bénigne, à surveiller si SpO2 basse ou fièvre très élevée.
+
+[x] Bronchite (aiguë)
+    Symptômes typiques : toux d'abord sèche, devenant grasse avec expectorations
+    jaunâtres/verdâtres chez environ la moitié des patients (évolution normale, pas
+    forcément une surinfection), brûlure derrière le sternum en toussant ou en respirant
+    profondément.
+    Constantes associées : fièvre légère si présente, ne dépassant généralement pas 38,5 °C.
+    Gravité habituelle : bénigne chez une personne sans problème de santé chronique ;
+    guérison naturelle en une dizaine de jours (toux pouvant persister 2-3 semaines). À
+    surveiller si essoufflement marqué ou SpO2 basse.
+
+[x] Angine
+    Symptômes typiques : douleur au fond de la gorge, nettement majorée en avalant, maux de
+    tête, fatigue, parfois toux et voix enrouée. Ganglions du cou gonflés et douloureux et
+    absence de toux orientent plutôt vers une origine bactérienne (streptocoque) ; seul un
+    test de diagnostic rapide (TROD angine) permet de trancher avec certitude.
+    Constantes associées : fièvre entre 38 et 39 °C.
+    Gravité habituelle : bénigne dans la grande majorité des cas ; une angine bactérienne
+    non traitée peut se compliquer, d'où l'intérêt d'un avis médical si les symptômes
+    persistent ou s'aggravent.
+
+[x] Fièvre isolée à surveiller
+    Symptômes typiques : fièvre sans autre symptôme identifiable (pas de toux, pas de mal
+    de gorge, pas de douleur particulière).
+    Constantes associées : température ≥ 38 °C (seuil de définition de la fièvre chez
+    l'adulte), sans anomalie sur les autres mesures.
+    Gravité habituelle : à surveiller plutôt que bénigne d'emblée — consultation
+    recommandée si la fièvre persiste plus de 48 heures sans amélioration, ou si des signes
+    d'alerte apparaissent (maux de tête sévères, raideur de nuque, vomissements, douleur
+    thoracique ou abdominale, confusion).
+
+[x] Crise d'anxiété (attaque de panique)
+    Symptômes typiques : montée brutale de peur intense, palpitations ou accélération du
+    rythme cardiaque, sensation d'essoufflement ou d'étouffement, sueurs abondantes,
+    tremblements, sensations de picotement ou d'engourdissement, vertiges, parfois douleur
+    ou gêne thoracique, nausées. Apparaît généralement en quelques minutes et se résorbe en
+    général en moins d'une demi-heure.
+    Constantes associées : pouls élevé (tachycardie), respiration rapide.
+    Gravité habituelle : impressionnante mais bénigne en elle-même — MSD précise que ces
+    symptômes, bien qu'intenses, "ne sont pas dangereux". Reste à écarter une cause
+    cardiaque/respiratoire réelle si c'est le premier épisode ou si la douleur thoracique
+    est marquée (voir "urgence cardio-respiratoire" ci-dessous, à éliminer en priorité par
+    prudence).
+
+[x] Urgence cardio-respiratoire (à écarter en priorité)
+    Symptômes typiques : douleur thoracique intense et prolongée (plus de quelques minutes),
+    en étau ou en pression, survenant au repos, pouvant irradier vers le bras gauche, la
+    mâchoire, le cou ou le dos ; essoufflement brutal au repos sans effort ; sueurs froides
+    abondantes avec pâleur et nausées ; lèvres ou doigts bleutés ; malaise ou perte de
+    connaissance. Chez la femme, les signes peuvent être atypiques : douleur dans le dos,
+    nausées/vomissements, ou fatigue brutale inhabituelle peuvent être les seuls signes.
+    Constantes associées : SpO2 basse, pouls anormal (haut ou bas selon la cause).
+    Gravité habituelle : URGENTE. En cas de doute, le réflexe est d'appeler les secours
+    immédiatement plutôt que d'attendre — c'est le principe déjà appliqué dans
+    config.EMERGENCY_MESSAGE et rules.detect_alerts.
+
+[x] Fatigue non spécifique (informations insuffisantes)
+    Symptômes typiques : fatigue signalée seule, sans autre symptôme précis permettant
+    d'orienter vers une cause particulière.
+    Constantes associées : aucune anomalie sur les mesures disponibles.
+    Gravité habituelle : indéterminée avec les informations actuelles — la réponse
+    appropriée est de demander des précisions (autres symptômes ? depuis quand ? contexte ?)
+    plutôt que de proposer une cause au hasard. C'est une catégorie "filet de sécurité" dans
+    rules.CAUSE_TABLE, pas une pathologie en soi.
+
+--------------------------------------------------------
+3. SIGNES D'ALERTE (recopié depuis rules.ALERT_KEYWORDS, ne pas modifier sans
+   modifier aussi rules.py en même temps)
+--------------------------------------------------------
+
+- Douleur thoracique
+- Détresse respiratoire / difficulté à respirer
+- Perte de connaissance
+
+--------------------------------------------------------
+SOURCES UTILISÉES
+--------------------------------------------------------
+
+- Ameli.fr — Rhinopharyngite de l'adulte, symptômes — https://www.ameli.fr/assure/sante/themes/rhinopharyngite-adulte/symptomes — consulté le 23/09/2026
+- Ameli.fr — Bronchite, définition/symptômes/évolution — https://www.ameli.fr/assure/sante/themes/bronchite/definition-symptomes-evolution — consulté le 23/09/2026
+- Ameli.fr — Angine, définition/symptômes/diagnostic — https://www.ameli.fr/assure/sante/themes/angine/definition-symptomes-diagnostic — consulté le 23/09/2026
+- Manuel MSD (grand public) — Crises de panique et trouble panique — https://www.msdmanuals.com/fr/accueil/troubles-mentaux/anxiété-et-troubles-liés-au-stress/crises-de-panique-et-trouble-panique — consulté le 23/09/2026
+- Santé.fr — Fièvre de l'adulte — https://www.sante.fr/fievre-de-ladulte — consulté le 23/09/2026
+- Cardiologues.net — Douleur thoracique, quand consulter en urgence — https://cardiologues.net/cardiologues/blog/douleur-thoracique-quand-consulter.html — consulté le 23/09/2026
+
+[Sources grand public déjà fiables pour un prototype éducatif. Pour le rapport final, il
+est recommandé de croiser au moins un point avec une source institutionnelle plus formelle
+(HAS, Vidal) si le temps le permet — pas bloquant pour la démo.]

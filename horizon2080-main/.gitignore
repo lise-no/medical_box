@@ -1,0 +1,25 @@
+# Environnement virtuel
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets et réglages locaux (chacun a le sien, ne pas versionner)
+.env
+
+# Base de données générée (mesures temporaires, historique)
+data/*.db
+data/*.sqlite3
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
